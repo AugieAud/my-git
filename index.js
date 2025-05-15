@@ -1,17 +1,35 @@
-const fs = require("fs"); // (file system module) built in node.js module that allows us to interact with the file system. use fs to create and write files
-const path = require("path"); //(path module) built in node.js module allowing us to join directory paths makes sure code works across different operating systems
+const fs = require("fs"); // Node.js built-in module for interacting with the file system (read/write files, create folders)
+const path = require("path"); // Node.js built-in module for handling file paths in a cross-platform way
 
 const init = () => {
-  const gitDir = path.join(process.cwd(), ".mygit"); //combines parts of file path into complete path
+  // Define the path to the hidden .mygit folder inside the current working directory
+  const gitDir = path.join(process.cwd(), ".mygit");
+
+  // If .mygit doesn't already exist (i.e. not initialized yet)
   if (!fs.existsSync(gitDir)) {
-    //checks to see if .mygit already exists
+    // Create the .mygit directory — acts like Git's hidden .git folder
     fs.mkdirSync(gitDir);
-    fs.mkdirSync(path.join(gitDir, "commits")); //create two folders .mygit the root, and .mygit/commits for commit snapshots
-    fs.writeFileSync(path.join(gitDir, "HEAD"), ""); // creates and empty head file inside .mygit/, stores cureent commit reference
+
+    // Create a commits folder inside .mygit to store commit snapshots (e.g., as files or folders)
+    fs.mkdirSync(path.join(gitDir, "commits"));
+
+    // Create the HEAD file and initialize it to point to the main branch
+    // HEAD tells us what the current branch is (like "main" or "dev")
+    fs.writeFileSync(path.join(gitDir, "HEAD"), "main");
+
+    // Initialize branches.json with a single "main" branch, currently pointing to `null` (i.e. no commits yet)
+    // This acts like Git's `refs/heads` directory, storing what each branch points to
+    fs.writeFileSync(
+      path.join(gitDir, "branches.json"),
+      JSON.stringify({ main: null }, null, 2) // nicely formatted for readability
+    );
+
     console.log("Initialised empty MyGit repository");
   } else {
+    // If already initialized, print a message
     console.log("MyGit repo already initialised");
   }
 };
 
+// Run the init function when this script is executed
 init();
