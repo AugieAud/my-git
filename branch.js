@@ -28,7 +28,7 @@ const createBranch = (name) => {
 const switchBranch = (name) => {
   const branches = JSON.parse(fs.readFileSync(branchesPath, "utf-8"));
 
-  if (!branches[name]) {
+  if (!(name in branches)) {
     console.log(`Branch "${name}" does not exist.`);
     return;
   }
